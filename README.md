@@ -20,3 +20,7 @@ These verify correctness according to the intended specifications:
 - Books partially unavailable correctly register missing quantities and adjust totals.
 
 ---
+
+# Assignment 5 Part 2
+
+[![SE333_CI](https://github.com/puredrachmasteel/assign5/actions/workflows/SE333_CI.yml/badge.svg)](https://github.com/puredrachmasteel/assign5/actions/workflows/SE333_CI.yml)
