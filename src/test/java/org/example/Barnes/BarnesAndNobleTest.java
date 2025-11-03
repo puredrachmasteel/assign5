@@ -82,4 +82,99 @@ class BarnesAndNobleTest {
         assertEquals(3, summary.getUnavailable().get(book)); // 5 - 2 unavailable
     }
 
+    // --- STRUCTURAL-BASED TESTS ---
+
+    @Test
+    @DisplayName("structural-based: order is not null → loop executes")
+    void testOrderLoopRuns() {
+        Book book = new Book("999", 5, 1);
+        BarnesAndNoble bn = createSystem(book);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("999", 1);
+
+        PurchaseSummary summary = bn.getPriceForCart(order);
+
+        assertEquals(5, summary.getTotalPrice());
+    }
+
+    @Test
+    @DisplayName("structural-based: pads <= 0 equivalent path (no padding case analogue)")
+    void testZeroQuantity() {
+        Book book = new Book("321", 15, 0);
+        BarnesAndNoble bn = createSystem(book);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("321", 1);
+
+        PurchaseSummary summary = bn.getPriceForCart(order);
+
+        // should add unavailable for full quantity
+        assertEquals(0, summary.getTotalPrice());
+        assertTrue(summary.getUnavailable().containsKey(book));
+    }
+
+    @Test
+    @DisplayName("structural-based: multiple books iteration path")
+    void testMultipleBooksPath() {
+        Book book1 = new Book("A", 10, 5);
+        Book book2 = new Book("B", 20, 2);
+
+        BookDatabase db = new BookDatabase() {
+            @Override
+            public Book findByISBN(String ISBN) {
+                return ISBN.equals("A") ? book1 : book2;
+            }
+        };
+        BuyBookProcess process = new FakeBuyProcess();
+
+        BarnesAndNoble bn = new BarnesAndNoble(db, process);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("A", 1);
+        order.put("B", 2);
+
+        PurchaseSummary summary = bn.getPriceForCart(order);
+
+        assertEquals(50, summary.getTotalPrice()); // 10 + 40
+    }
+
+    @Test
+    @DisplayName("structural-based: same object reference returns true")
+    void testEqualsSameReference() {
+        Book book = new Book("123", 10, 2);
+        assertEquals(book, book); // this == o
+    }
+
+    @Test
+    @DisplayName("structural-based: comparing with null returns false")
+    void testEqualsNullObject() {
+        Book book = new Book("123", 10, 2);
+        assertNotEquals(null, book); // o == null
+    }
+
+    @Test
+    @DisplayName("structural-based: comparing with different class returns false")
+    void testEqualsDifferentClass() {
+        Book book = new Book("123", 10, 2);
+        String notABook = "123";
+        assertNotEquals(book, notABook); // getClass() != o.getClass()
+    }
+
+    @Test
+    @DisplayName("structural-based: comparing different books with same ISBN returns true")
+    void testEqualsSameISBN() {
+        Book book1 = new Book("XYZ", 15, 3);
+        Book book2 = new Book("XYZ", 25, 1); // same ISBN, diff price/qty
+        assertEquals(book1, book2); // ISBN.equals(book.ISBN) == true
+    }
+
+    @Test
+    @DisplayName("structural-based: comparing different books with different ISBN returns false")
+    void testEqualsDifferentISBN() {
+        Book book1 = new Book("ABC", 10, 3);
+        Book book2 = new Book("DEF", 10, 3);
+        assertNotEquals(book1, book2); // ISBN.equals(book.ISBN) == false
+    }
+
 }
