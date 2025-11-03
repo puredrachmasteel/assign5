@@ -41,4 +41,45 @@ class BarnesAndNobleTest {
         BuyBookProcess process = new FakeBuyProcess();
         return new BarnesAndNoble(db, process);
     }
+
+    // --- SPECIFICATION-BASED TESTS ---
+
+    @Test
+    @DisplayName("specification-based: returns null when order is null")
+    void testNullOrderReturnsNull() {
+        BarnesAndNoble bn = createSystem(new Book("123", 10, 5));
+        assertNull(bn.getPriceForCart(null));
+    }
+
+    @Test
+    @DisplayName("specification-based: valid single book fully in stock")
+    void testBookInStockFullQuantity() {
+        Book book = new Book("123", 20, 5);
+        BarnesAndNoble bn = createSystem(book);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("123", 3);
+
+        PurchaseSummary summary = bn.getPriceForCart(order);
+
+        assertEquals(60, summary.getTotalPrice());
+        assertTrue(summary.getUnavailable().isEmpty());
+    }
+
+    @Test
+    @DisplayName("specification-based: book partially unavailable")
+    void testBookPartiallyUnavailable() {
+        Book book = new Book("123", 10, 2);
+        BarnesAndNoble bn = createSystem(book);
+
+        Map<String, Integer> order = new HashMap<>();
+        order.put("123", 5);
+
+        PurchaseSummary summary = bn.getPriceForCart(order);
+
+        assertEquals(20, summary.getTotalPrice());
+        assertEquals(1, summary.getUnavailable().size());
+        assertEquals(3, summary.getUnavailable().get(book)); // 5 - 2 unavailable
+    }
+
 }
