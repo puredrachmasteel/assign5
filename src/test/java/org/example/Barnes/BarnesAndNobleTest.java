@@ -177,4 +177,13 @@ class BarnesAndNobleTest {
         assertNotEquals(book1, book2); // ISBN.equals(book.ISBN) == false
     }
 
+    @Test
+    @DisplayName("structural-based: explicit null check path in equals")
+    void testEqualsExplicitNullPath() {
+        Book book = new Book("123", 10, 2);
+        Object o = null;
+        assertNotEquals(book, o); // hits o == null true branch
+    }
+
+
 }
