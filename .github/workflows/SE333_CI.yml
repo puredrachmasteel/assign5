@@ -31,7 +31,10 @@ jobs:
           path: target/site/checkstyle.xml
 
       - name: Run Maven Test
-        ##TODO
+        run: mvn test
 
       - name: Jacoco Report
-        ##TODO
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/jacoco.xml
