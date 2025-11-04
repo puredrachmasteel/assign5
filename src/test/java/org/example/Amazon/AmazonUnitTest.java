@@ -64,9 +64,6 @@ public class AmazonUnitTest {
         assertNotNull(db2.getConnection()); // still works, connection reused
     }
 
-
-    // ---------- Structural-based unit tests ----------
-
     @Test
     @DisplayName("structural-based: calculate aggregates multiple rules")
     void testMultipleRulesAggregate() {
@@ -82,8 +79,6 @@ public class AmazonUnitTest {
 
         assertEquals(15.0, total);
     }
-
-    // ---------- DeliveryPrice: explicit structural coverage for all branches ----------
 
     @Test
     @DisplayName("structural-based: DeliveryPrice - zero items returns 0")
@@ -133,8 +128,6 @@ public class AmazonUnitTest {
         assertEquals(20.0, rule.priceToAggregate(elevenItems));
     }
 
-    // ---------- ExtraCostForElectronics and RegularCost checks (coverage) ----------
-
     @Test
     @DisplayName("structural-based: ExtraCostForElectronics true/false")
     void testExtraCostForElectronics() {
@@ -160,9 +153,6 @@ public class AmazonUnitTest {
         assertEquals(8.0, total);
     }
 
-    // ---------- Database.withSql exception wrapping coverage ----------
-    // This unit-level test ensures the withSql(...) catch branch throws RuntimeException
-    // when the supplier throws SQLException.
     @Test
     @DisplayName("structural-based: Database.withSql wraps SQLException as RuntimeException")
     void testDatabaseWithSqlThrowsRuntimeException() {
